@@ -23,6 +23,46 @@ func NewUserMysqlRepository() domain.UserRepository {
 				Name: "test2",
 				Age:  12,
 			},
+			domain.User{
+				ID:   3,
+				Name: "test3",
+				Age:  37,
+			},
+			domain.User{
+				ID:   4,
+				Name: "test4",
+				Age:  14,
+			},
+			domain.User{
+				ID:   5,
+				Name: "test5",
+				Age:  53,
+			},
+			domain.User{
+				ID:   6,
+				Name: "test6",
+				Age:  49,
+			},
+			domain.User{
+				ID:   7,
+				Name: "test7",
+				Age:  24,
+			},
+			domain.User{
+				ID:   8,
+				Name: "test8",
+				Age:  22,
+			},
+			domain.User{
+				ID:   9,
+				Name: "test9",
+				Age:  35,
+			},
+			domain.User{
+				ID:   10,
+				Name: "test10",
+				Age:  72,
+			},
 		},
 	}
 }

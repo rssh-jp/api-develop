@@ -146,4 +146,30 @@ func TestSuccess(t *testing.T) {
 			}
 		})
 	}
+
+	t.Run("Confirm", func(t *testing.T) {
+		res, err := http.Get(ts.URL + "/user/1")
+
+		defer res.Body.Close()
+
+		buf, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		expect, err := json.Marshal(domain.User{
+			ID:   1,
+			Name: "change-test-1",
+			Age:  33,
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		actual := strings.Trim(string(buf), "\n")
+
+		if !cmp.Equal(string(expect), actual) {
+			t.Errorf("Could not match testcases.\nexpect: %+v\nactual: %+v\n", string(expect), actual)
+		}
+	})
 }

@@ -2,9 +2,9 @@ package delivery
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/rssh-jp/api-develop/domain"
+	"github.com/rssh-jp/api-develop/internal/http/echo/gen"
 
 	"github.com/labstack/echo/v4"
 )
@@ -18,12 +18,10 @@ func HandleUserHTTPDelivery(e *echo.Echo, userUsecase domain.UserUsecase) {
 		userUsecase: userUsecase,
 	}
 
-	e.GET("/user", handler.GetUser)
-	e.GET("/user/:id", handler.GetByID)
-	e.POST("/user/update", handler.Update)
+	gen.RegisterHandlers(e, handler)
 }
 
-func (ud *userDelivery) GetUser(c echo.Context) error {
+func (ud *userDelivery) Fetch(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	res, err := ud.userUsecase.Fetch(ctx)
@@ -33,17 +31,11 @@ func (ud *userDelivery) GetUser(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, res)
 }
-func (ud *userDelivery) GetByID(c echo.Context) error {
+
+func (ud *userDelivery) GetByID(c echo.Context, id int64) error {
 	ctx := c.Request().Context()
 
-	idStr := c.Param("id")
-
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		return c.String(http.StatusNotFound, err.Error())
-	}
-
-	res, err := ud.userUsecase.GetByID(ctx, int64(id))
+	res, err := ud.userUsecase.GetByID(ctx, id)
 	if err != nil {
 		return c.String(http.StatusNotFound, err.Error())
 	}
@@ -54,7 +46,7 @@ func (ud *userDelivery) GetByID(c echo.Context) error {
 func (ud *userDelivery) Update(c echo.Context) error {
 	ctx := c.Request().Context()
 
-	r := new(RecvUpdate)
+	r := new(gen.User)
 
 	err := c.Bind(r)
 	if err != nil {
@@ -62,9 +54,9 @@ func (ud *userDelivery) Update(c echo.Context) error {
 	}
 
 	user := domain.User{
-		ID:   r.ID,
+		ID:   r.Id,
 		Name: r.Name,
-		Age:  r.Age,
+		Age:  int(r.Age),
 	}
 
 	err = ud.userUsecase.Update(ctx, user)

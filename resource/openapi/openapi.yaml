@@ -1,0 +1,141 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: APIカタログ
+  description: |
+    このAPIが返却する情報が書いてあるので、これを参考にしてください。  
+    クライアント、サーバ共にこのファイルから生成し、それを使用してください。  
+    そうすることでこのカタログが活きます。
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: Swagger API Team
+    email: apiteam@swagger.io
+    url: http://swagger.io
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: http://localhost:8080
+paths:
+  /user:
+    get:
+      tags: 
+        - User
+      summary: ユーザの一括取得
+      description: ユーザを全て取得する
+      operationId: Fetch
+      responses:
+        '200':
+          description: ユーザ情報の配列
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        default:
+          description: エラー
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Error'
+  /user/{id}:
+    get:
+      tags: 
+        - User
+      summary: ユーザ取得
+      description: 指定されたIDのユーザ情報を取得する
+      operationId: GetByID
+      parameters:
+        - name: id
+          in: path
+          description: ユーザID
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: ユーザ情報
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/User'
+        default:
+          description: エラー
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Error'
+
+  /user/update:
+    post:
+      tags: 
+        - User
+      summary: ユーザ更新
+      description: IDが一致するユーザ情報を更新する
+      operationId: Update
+      requestBody:
+        description: ユーザ情報。一致するIDがない場合はエラーで返る
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: 成功したら"OK"の文字列が返る
+          content:
+            application/json:
+              schema:
+                type: string
+        default:
+          description: エラー
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    User:
+      allOf:
+        - $ref: '#/components/schemas/NewUser'
+        - required:
+          - id
+          properties:
+            id:
+              type: integer
+              format: int64
+              description: ユニークID。64ビット
+
+    NewUser:
+      required:
+        - name
+        - age
+      properties:
+        name:
+          type: string
+          description: 名前
+        age:
+          type: integer
+          format: int32
+          description: 年齢
+
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+          description: エラーコード
+        message:
+          type: string
+          description: エラーメッセージ

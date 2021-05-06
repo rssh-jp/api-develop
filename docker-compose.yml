@@ -2,11 +2,33 @@ version: "3"
 
 services:
     api:
+        container_name: "api"
         build:
             context: .
-            dockerfile: Dockerfile
+            dockerfile: Dockerfile-dev
         tty: true
         ports:
             - "8080:80"
         volumes:
             - .:/go/src/app/
+        networks:
+            app-net:
+                ipv4_address: 172.30.0.2
+    swagger-ui:
+        container_name: "openapi"
+        image: swaggerapi/swagger-ui
+        ports:
+            - "18080:8080"
+        volumes:
+            - ./resource/openapi/openapi.yaml:/usr/share/nginx/html/openapi.yaml
+        environment:
+            API_URL: openapi.yaml
+        networks:
+            app-net:
+                ipv4_address: 172.30.0.3
+networks:
+  app-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
