@@ -1,0 +1,20 @@
+syntax = "proto3";
+package test;
+
+option go_package = "internal/grpc/pb";
+
+message User {
+  int64 id = 1;
+  string name = 2;
+  int32 age = 3;
+}
+
+service Users {
+  rpc Fetch(FetchRequest)returns(FetchReply){}
+}
+
+message FetchRequest {
+}
+message FetchReply {
+  repeated User users = 1;
+}

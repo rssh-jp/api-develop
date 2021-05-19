@@ -9,6 +9,7 @@ services:
         tty: true
         ports:
             - "8080:80"
+            - "50051:50051"
         volumes:
             - .:/go/src/app/
         networks:

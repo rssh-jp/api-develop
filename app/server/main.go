@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net"
 
 	userDelivery "github.com/rssh-jp/api-develop/user/delivery"
 	userRepository "github.com/rssh-jp/api-develop/user/repository"
@@ -17,6 +18,7 @@ import (
 
 func main() {
 	const address = ":80"
+	const grpcAddress = ":50051"
 
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
@@ -41,8 +43,29 @@ func main() {
 	//ur := userRepository.NewUserBigtableRepository(bigtableClient)
 	uu := userUsecase.NewUserUsecase(ur)
 	userDelivery.HandleUserHTTPDelivery(e, uu)
+	grpcServer := userDelivery.HandleUserGRPCDelivery(uu)
 
-	log.Fatal(e.Start(address))
+	chErr := make(chan error)
+	defer close(chErr)
+
+	go func() {
+		chErr <- e.Start(address)
+	}()
+
+	go func() {
+		log.Println("gRPC Server START", grpcAddress)
+		listener, err := net.Listen("tcp", grpcAddress)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		chErr <- grpcServer.Serve(listener)
+	}()
+
+	select {
+	case err := <-chErr:
+		log.Fatal(err)
+	}
 }
 
 func makeSpannerClient(ctx context.Context, project, instance, db string) (*spanner.Client, error) {

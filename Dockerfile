@@ -11,4 +11,4 @@ WORKDIR /go/src/app
 
 COPY . /go/src/app
 
-CMD reflex  -s -r '\.go$$' go run app/http/main.go
+CMD reflex  -s -r '\.go$$' go run app/server/main.go

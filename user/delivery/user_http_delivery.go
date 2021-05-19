@@ -9,19 +9,19 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type userDelivery struct {
+type userHTTPDelivery struct {
 	userUsecase domain.UserUsecase
 }
 
 func HandleUserHTTPDelivery(e *echo.Echo, userUsecase domain.UserUsecase) {
-	handler := &userDelivery{
+	handler := &userHTTPDelivery{
 		userUsecase: userUsecase,
 	}
 
 	gen.RegisterHandlers(e, handler)
 }
 
-func (ud *userDelivery) Fetch(c echo.Context) error {
+func (ud *userHTTPDelivery) Fetch(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	res, err := ud.userUsecase.Fetch(ctx)
@@ -32,7 +32,7 @@ func (ud *userDelivery) Fetch(c echo.Context) error {
 	return c.JSON(http.StatusOK, res)
 }
 
-func (ud *userDelivery) GetByID(c echo.Context, id int64) error {
+func (ud *userHTTPDelivery) GetByID(c echo.Context, id int64) error {
 	ctx := c.Request().Context()
 
 	res, err := ud.userUsecase.GetByID(ctx, id)
@@ -43,7 +43,7 @@ func (ud *userDelivery) GetByID(c echo.Context, id int64) error {
 	return c.JSON(http.StatusOK, res)
 }
 
-func (ud *userDelivery) Update(c echo.Context) error {
+func (ud *userHTTPDelivery) Update(c echo.Context) error {
 	ctx := c.Request().Context()
 
 	r := new(gen.User)
