@@ -3,8 +3,13 @@ APIのテンプレート
 
 ## 使い方
 
+### 事前準備
+予めprotocol bufferをインストールしておいてください。  
+https://grpc.io/docs/protoc-installation/  
+
 ### Makefile版
 ```
+make build
 make up
 ```
 
@@ -12,8 +17,12 @@ make up
 ```
 go get github.com/cespare/reflex
 go get github.com/deepmap/oapi-codegen/cmd/oapi-codegen@v1.3.8
+go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.26
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1
 mkdir -p internal/http/echo/gen/
 oapi-codegen -package gen -o internal/http/echo/gen/gen.go -generate "types,server" resource/openapi/openapi.yaml
+protoc -I ./ --go_out=./ --go-grpc_out=./ resource/protocol-buffer/test-api.proto
+docker-compose build
 docker-compose up
 ```
 
