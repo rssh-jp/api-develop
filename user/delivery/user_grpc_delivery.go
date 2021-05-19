@@ -46,10 +46,34 @@ func (ud *userGRPCDelivery) Fetch(ctx context.Context, in *pb.FetchRequest) (*pb
 	}, nil
 }
 
-func (ud *userGRPCDelivery) GetByID(ctx context.Context, id int64) error {
-	return nil
+func (ud *userGRPCDelivery) GetByID(ctx context.Context, in *pb.GetByIDRequest) (*pb.GetByIDReply, error) {
+	user, err := ud.userUsecase.GetByID(ctx, in.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.GetByIDReply{
+		User: &pb.User{
+			Id:   user.ID,
+			Name: user.Name,
+			Age:  int32(user.Age),
+		},
+	}, nil
 }
 
-func (ud *userGRPCDelivery) Update(ctx context.Context) error {
-	return nil
+func (ud *userGRPCDelivery) Update(ctx context.Context, in *pb.UpdateRequest) (*pb.UpdateReply, error) {
+	user := domain.User{
+		ID:   in.User.Id,
+		Name: in.User.Name,
+		Age:  int(in.User.Age),
+	}
+
+	err := ud.userUsecase.Update(ctx, user)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.UpdateReply{
+		Message: "OK",
+	}, nil
 }

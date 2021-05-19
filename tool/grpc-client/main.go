@@ -22,6 +22,19 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
+	user := &pb.User{
+		Id:   1,
+		Name: "change-name1",
+		Age:  33,
+	}
+
+	updateReply, err := c.Update(ctx, &pb.UpdateRequest{User: user})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println(updateReply)
+
 	users, err := c.Fetch(ctx, &pb.FetchRequest{})
 	if err != nil {
 		log.Fatal(err)

@@ -11,10 +11,26 @@ message User {
 
 service Users {
   rpc Fetch(FetchRequest)returns(FetchReply){}
+  rpc GetByID(GetByIDRequest)returns(GetByIDReply){}
+  rpc Update(UpdateRequest)returns(UpdateReply){}
 }
 
 message FetchRequest {
 }
 message FetchReply {
   repeated User users = 1;
+}
+
+message GetByIDRequest {
+  int64 id = 1;
+}
+message GetByIDReply {
+  User user = 1;
+}
+
+message UpdateRequest {
+  User user = 1;
+}
+message UpdateReply {
+  string message = 1;
 }
